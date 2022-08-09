@@ -1,6 +1,11 @@
-#include "mainwindow.h""
+#include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "QDateTime"
+#include <iostream>
+#include "task.h"
+//#include "taskTracker.h"
+
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -8,13 +13,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     QDateTime time = QDateTime::currentDateTime();
-    setStyleSheet("background-color:white;");
+    setStyleSheet("background-color:#E0E0E0;");
     ui->label_2->setStyleSheet("font-size: 17px;");
+    ui->label_4->setStyleSheet("border: 0px solid gray;"
+                               "font-size: 17px;");
     ui->label_3->setStyleSheet("font-size: 17px;");
     ui->label_3->setText(time.toString("dd.MM.yyyy"));
     ui->textEdit->setPlaceholderText(QString("Name"));
     ui->textEdit_2->setPlaceholderText(QString("Description"));
-    ui->frame->setStyleSheet("background-color: white;"
+    ui->frame->setStyleSheet("background-color: whitesmoke;"
                              "border: 1px solid gray;"
                              "border-radius:5px;");
     ui->frame_4->setStyleSheet("background-color: white;"
@@ -33,12 +40,31 @@ MainWindow::MainWindow(QWidget *parent)
                                "border-radius:5px;");
     ui->frame_4->hide();
     ui->frame_5->hide();
+    this->frame4ON = 0;
+    this->frame5ON = 0;
     ui->pushButton->setStyleSheet("background-color: white;"
                                   "border: 1px solid gray;"
                                   "border-radius:5px;");
     ui->pushButton_5->setStyleSheet("background-color: white;"
                                   "border: 1px solid gray;"
                                   "border-radius:5px;");
+    ui->frame_2->setStyleSheet("background-color: white;"
+                               "border: 1px solid gray;"
+                               "border-botton: 1px solid gray;"
+                               "border-radius:5px;");
+    ui->checkBox->setStyleSheet("background-color: white;"
+                                "border: 0px solid gray;"
+                                "border-botton: 0px solid gray;");
+    ui->label->setStyleSheet("background-color: white;"
+                             "border: 0px solid gray;"
+                             "border-botton: 0px solid gray;");
+    ui->textBrowser->setStyleSheet("background-color: white;"
+                              "border: 0px solid gray;");
+    ui->label_6->setStyleSheet("background-color: white;"
+                                "border: 0px solid gray;");
+    ui->label_7->setStyleSheet("background-color: white;"
+                                "border: 0px solid gray;");
+    ui->frame_2->hide();
 }
 
 MainWindow::~MainWindow()
@@ -60,16 +86,31 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    ui->frame_4->show();
+    if(frame4ON == 1) {
+        ui->frame_4->hide();
+        frame4ON = 0;
+    }
+    if(frame4ON == 0) {
+        ui->frame_4->show();
+        frame4ON = 1;
+    }
     ui->frame_5->hide();
+    frame5ON = 0;
 }
 
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    ui->frame_5->show();
+    if(frame5ON == 1) {
+        ui->frame_5->hide();
+        frame5ON = 0;
+    }
+    if(frame5ON == 0) {
+        ui->frame_5->show();
+        frame5ON = 1;
+    }
     ui->frame_4->hide();
-
+    frame4ON = 0;
 }
 
 
@@ -95,28 +136,36 @@ void MainWindow::on_radioButton_4_clicked()
 {
     ui->pushButton_2->setText("No Date");
 }
-
-
 void MainWindow::on_radioButton_5_clicked()
 {
     ui->pushButton_3->setText("Priority 1");
 }
-
-
 void MainWindow::on_radioButton_6_clicked()
 {
     ui->pushButton_3->setText("Priority 2");
 }
-
-
 void MainWindow::on_radioButton_7_clicked()
 {
     ui->pushButton_3->setText("Priority 3");
 }
-
-
 void MainWindow::on_radioButton_8_clicked()
 {
     ui->pushButton_3->setText("Priority 4");
 }
+void MainWindow::on_pushButton_5_clicked()
+{
+    ui->frame_4->hide();
+    ui->frame_5->hide();
+    QString name = ui->textEdit->toPlainText();
+    QString desc = ui->textEdit_2->toPlainText();
+    QString date = ui->pushButton_2->text();
+    QString prior = ui->pushButton_3->text();
+    Task t(name, desc, date, prior);
+    tt.addTask(t);
+    ui->frame_2->show();
+    ui->label->setText(name);
+    ui->textBrowser->setText(desc);
+    ui->label_6->setText(date);
+    ui->label_7->setText(prior);
 
+}

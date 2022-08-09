@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "taskTracker.h"
+#include "task.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,7 +40,12 @@ private slots:
 
     void on_radioButton_8_clicked();
 
+    void on_pushButton_5_clicked();
+
 private:
     Ui::MainWindow *ui;
+    bool frame4ON;
+    bool frame5ON;
+    TaskTracker tt;
 };
 #endif // MAINWINDOW_H
