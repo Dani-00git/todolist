@@ -1,9 +1,17 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "QDateTime"
+#include "QScrollArea"
+#include "QTextBrowser"
+#include "QCheckBox"
 #include <iostream>
+#include "QtCore/qobjectdefs.h"
 #include "task.h"
-//#include "taskTracker.h"
+#include "taskTracker.h"
+#include <fstream>
+#include "QFile"
+#include "QTextStream"
+#include "DBMS.h"
 
 using namespace std;
 
@@ -12,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->taskPosition=0;
     QDateTime time = QDateTime::currentDateTime();
     setStyleSheet("background-color:#E0E0E0;");
     ui->label_2->setStyleSheet("font-size: 17px;");
@@ -48,31 +57,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButton_5->setStyleSheet("background-color: white;"
                                   "border: 1px solid gray;"
                                   "border-radius:5px;");
-    ui->frame_2->setStyleSheet("background-color: white;"
-                               "border: 1px solid gray;"
-                               "border-botton: 1px solid gray;"
-                               "border-radius:5px;");
-    ui->checkBox->setStyleSheet("background-color: white;"
-                                "border: 0px solid gray;"
-                                "border-botton: 0px solid gray;");
-    ui->label->setStyleSheet("background-color: white;"
-                             "border: 0px solid gray;"
-                             "border-botton: 0px solid gray;");
-    ui->textBrowser->setStyleSheet("background-color: white;"
-                              "border: 0px solid gray;");
-    ui->label_6->setStyleSheet("background-color: white;"
-                                "border: 0px solid gray;");
-    ui->label_7->setStyleSheet("background-color: white;"
-                                "border: 0px solid gray;");
-    ui->frame_2->hide();
+    QLabel* l = new QLabel(ui->scrollArea);
+    l->show();
+    l->move(0, 1000);
+
+    tt.setTasks(dbms.fetchData());
+    build();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
 void MainWindow::on_pushButton_clicked()
 {
     ui->textEdit->setText("");
@@ -82,8 +78,6 @@ void MainWindow::on_pushButton_clicked()
     ui->frame_4->hide();
     ui->frame_5->hide();
 }
-
-
 void MainWindow::on_pushButton_2_clicked()
 {
     if(frame4ON == 1) {
@@ -97,8 +91,6 @@ void MainWindow::on_pushButton_2_clicked()
     ui->frame_5->hide();
     frame5ON = 0;
 }
-
-
 void MainWindow::on_pushButton_3_clicked()
 {
     if(frame5ON == 1) {
@@ -112,26 +104,18 @@ void MainWindow::on_pushButton_3_clicked()
     ui->frame_4->hide();
     frame4ON = 0;
 }
-
-
 void MainWindow::on_radioButton_clicked()
 {
     ui->pushButton_2->setText("Today");
 }
-
-
 void MainWindow::on_radioButton_2_clicked()
 {
     ui->pushButton_2->setText("Tomorrow");
 }
-
-
 void MainWindow::on_radioButton_3_clicked()
 {
     ui->pushButton_2->setText("This Week");
 }
-
-
 void MainWindow::on_radioButton_4_clicked()
 {
     ui->pushButton_2->setText("No Date");
@@ -152,6 +136,13 @@ void MainWindow::on_radioButton_8_clicked()
 {
     ui->pushButton_3->setText("Priority 4");
 }
+void MainWindow::delTask(QFrame* frame)
+{
+    ui->label_2->setText("gg");
+    QString name = frame->findChild<QLabel*>("label")->text();
+    this->tt.removeTask(name);
+    build();
+}
 void MainWindow::on_pushButton_5_clicked()
 {
     ui->frame_4->hide();
@@ -162,10 +153,69 @@ void MainWindow::on_pushButton_5_clicked()
     QString prior = ui->pushButton_3->text();
     Task t(name, desc, date, prior);
     tt.addTask(t);
-    ui->frame_2->show();
-    ui->label->setText(name);
-    ui->textBrowser->setText(desc);
-    ui->label_6->setText(date);
-    ui->label_7->setText(prior);
-
+    build();
+    dbms.storeData(t);
 }
+void MainWindow::build(){
+
+    for(QFrame* f:taskFrames) f->close();
+    taskFrames.clear();
+    taskPosition=0;
+
+    for(Task t:tt.getTasks()){
+        QFrame* newFrame = new QFrame(ui->scrollAreaWidgetContents);
+        this->taskFrames.push_back(newFrame);
+        QPoint pos = ui->scrollAreaWidgetContents->mapToGlobal(ui->scrollAreaWidgetContents->rect().topLeft());
+        ui->scrollAreaWidgetContents->setGeometry(0, 0, 500, 1000+taskPosition);
+        newFrame->setGeometry(120, 339+taskPosition, 581, 111);
+        taskPosition += 131;
+        newFrame->setStyleSheet("background-color: white;"
+                                "border: 1px solid gray;"
+                                "border-radius:5px;");
+        newFrame->show();
+
+        QCheckBox* cb = new QCheckBox(newFrame);
+        cb->setGeometry(10, 10, 25, 25);
+        cb->setStyleSheet("background-color: white;"
+                          "border: 0px solid gray;");
+        cb->setTristate(t.getIsDone());
+        cb->show();
+
+        QLabel* label = new QLabel(newFrame);
+        label->setGeometry(40, 10, 521, 16);
+        label->setStyleSheet("background-color: white;"
+                          "border: 0px solid gray;");
+        label->setText(t.getName());
+        label->show();
+
+        QTextBrowser* tb = new QTextBrowser(newFrame);
+        tb->setGeometry(40, 30, 521, 41);
+        tb->setStyleSheet("background-color: white;"
+                          "border: 0px solid gray;");
+        tb->setText(t.getDesc());
+        tb->show();
+
+        QLabel* dateLabel = new QLabel(newFrame);
+        dateLabel->setGeometry(40, 80, 121, 16);
+        dateLabel->setStyleSheet("background-color: white;"
+                                "border: 0px solid gray;");
+        dateLabel->setText(t.getDate());
+        dateLabel->show();
+
+        QLabel* priorLabel = new QLabel(newFrame);
+        priorLabel->setGeometry(180, 80, 111, 16);
+        priorLabel->setStyleSheet("background-color: white;"
+                                "border: 0px solid gray;");
+        priorLabel->setText(t.getPrior());
+        priorLabel->show();
+
+        QPushButton* del = new QPushButton(newFrame);
+        del->setGeometry(550, 10, 20, 20);
+        del->setStyleSheet("background-color: white;"
+                          "border: 1px solid gray;");
+        del->setText("X");
+        del->show();
+        QObject::connect(del, SIGNAL(clicked()), this, SLOT(delTask(del->parent)));
+    }
+}
+

@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "QtWidgets/qframe.h"
 #include "taskTracker.h"
 #include "task.h"
+#include "list"
+#include "DBMS.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,6 +19,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void build();
 
 private slots:
     void on_pushButton_clicked();
@@ -42,10 +46,15 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void delTask(QFrame* frame);
+
 private:
     Ui::MainWindow *ui;
     bool frame4ON;
     bool frame5ON;
     TaskTracker tt;
+    int taskPosition;
+    list<QFrame*> taskFrames;
+    DBMS dbms;
 };
 #endif // MAINWINDOW_H

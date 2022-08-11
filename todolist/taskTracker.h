@@ -7,11 +7,24 @@ using namespace std;
 class TaskTracker
 {
 public:
-    TaskTracker(){
-
-    };
+    TaskTracker(){};
     void addTask(Task t){
         tasks.push_back(t);
+    }
+    void removeTask(QString name){
+        list<Task> newList;
+        for(Task t:tasks){
+            if(t.getName() != name){
+                newList.push_back(t);
+            }
+        }
+        tasks = newList;
+    }
+    list<Task> getTasks(){
+        return tasks;
+    }
+    void setTasks(list<Task> tasks){
+        this->tasks = tasks;
     }
 private:
     list<Task> tasks;

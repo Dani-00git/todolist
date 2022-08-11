@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
         task.h
         taskTracker.h
+        Builder.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
