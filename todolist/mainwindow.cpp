@@ -12,6 +12,7 @@
 #include "QFile"
 #include "QTextStream"
 #include "DBMS.h"
+#include "QSignalMapper""
 
 using namespace std;
 
@@ -136,11 +137,20 @@ void MainWindow::on_radioButton_8_clicked()
 {
     ui->pushButton_3->setText("Priority 4");
 }
-void MainWindow::delTask(QFrame* frame)
+QFrame* MainWindow::getFrame(int i)
 {
-    ui->label_2->setText("gg");
+    int j=0;
+    for(QFrame* f:this->taskFrames){
+        if(j==i)    return f;
+        j++;
+    }
+}
+void MainWindow::delTask(int i)
+{
+    QFrame* frame = this->getFrame(i);
     QString name = frame->findChild<QLabel*>("label")->text();
-    this->tt.removeTask(name);
+    this->tt.deleteTask(name);
+    dbms.deleteTask(tt,name);
     build();
 }
 void MainWindow::on_pushButton_5_clicked()
@@ -161,6 +171,8 @@ void MainWindow::build(){
     for(QFrame* f:taskFrames) f->close();
     taskFrames.clear();
     taskPosition=0;
+    QSignalMapper* mapper = new QSignalMapper (this) ;
+    int i=0;
 
     for(Task t:tt.getTasks()){
         QFrame* newFrame = new QFrame(ui->scrollAreaWidgetContents);
@@ -182,6 +194,7 @@ void MainWindow::build(){
         cb->show();
 
         QLabel* label = new QLabel(newFrame);
+        label->setObjectName("label");
         label->setGeometry(40, 10, 521, 16);
         label->setStyleSheet("background-color: white;"
                           "border: 0px solid gray;");
@@ -215,7 +228,11 @@ void MainWindow::build(){
                           "border: 1px solid gray;");
         del->setText("X");
         del->show();
-        QObject::connect(del, SIGNAL(clicked()), this, SLOT(delTask(del->parent)));
+
+        QObject::connect(del, SIGNAL(clicked()), mapper, SLOT(map()));
+        mapper->setMapping(del, i);
+        i++;
     }
+    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(delTask(int)));
 }
 

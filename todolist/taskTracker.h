@@ -11,12 +11,13 @@ public:
     void addTask(Task t){
         tasks.push_back(t);
     }
-    void removeTask(QString name){
+    void deleteTask(QString name){
         list<Task> newList;
         for(Task t:tasks){
             if(t.getName() != name){
                 newList.push_back(t);
             }
+            else deletedTasks.push_back(t);
         }
         tasks = newList;
     }
@@ -28,6 +29,7 @@ public:
     }
 private:
     list<Task> tasks;
+    list<Task> deletedTasks;
 };
 
 #endif // TASKTRACKER_H

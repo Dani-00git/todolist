@@ -46,7 +46,9 @@ private slots:
 
     void on_pushButton_5_clicked();
 
-    void delTask(QFrame* frame);
+    void delTask(int i);
+
+    QFrame* getFrame(int i);
 
 private:
     Ui::MainWindow *ui;
