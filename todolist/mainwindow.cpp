@@ -150,7 +150,9 @@ void MainWindow::delTask(int i)
     QFrame* frame = this->getFrame(i);
     QString name = frame->findChild<QLabel*>("label")->text();
     this->tt.deleteTask(name);
-    dbms.deleteTask(tt,name);
+    dbms.deleteTask();
+    for(Task t:tt.getTasks())
+        dbms.storeTask(t);
     build();
 }
 void MainWindow::on_pushButton_5_clicked()
@@ -164,7 +166,7 @@ void MainWindow::on_pushButton_5_clicked()
     Task t(name, desc, date, prior);
     tt.addTask(t);
     build();
-    dbms.storeData(t);
+    dbms.storeTask(t);
 }
 void MainWindow::build(){
 

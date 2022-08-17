@@ -12,31 +12,16 @@ class DBMS
 {
 public:
 
-    void deleteTask(TaskTracker tt, QString name){
+    void deleteTask(){
         QFile f("/Users/danielemorganti/Desktop/todolist/db.txt");
         if(f.open(QIODevice::ReadWrite | QIODevice::Append | QIODevice::Text))
         {
-            QString s;
-            QTextStream t(&f);
-            while(!t.atEnd())
-            {
-                QString line = t.readLine();
-                if(!line.contains(name))
-                    s.append(line + "\n");
-                else{
-                    t.readLine();
-                    t.readLine();
-                    t.readLine();
-                    t.readLine();
-                }
-            }
             f.resize(0);
-            t << s;
             f.close();
         }
     }
 
-    void storeData(Task t){
+    void storeTask(Task t){
         QFile file("/Users/danielemorganti/Desktop/todolist/db.txt");
         if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
         {
