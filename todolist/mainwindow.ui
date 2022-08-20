@@ -37,13 +37,13 @@
        <x>0</x>
        <y>0</y>
        <width>819</width>
-       <height>1000</height>
+       <height>2000</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
        <width>500</width>
-       <height>1000</height>
+       <height>2000</height>
       </size>
      </property>
      <widget class="QLabel" name="label_2">

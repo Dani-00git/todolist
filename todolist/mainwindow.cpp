@@ -12,7 +12,7 @@
 #include "QFile"
 #include "QTextStream"
 #include "DBMS.h"
-#include "QSignalMapper""
+#include "QSignalMapper"
 
 using namespace std;
 
@@ -58,9 +58,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButton_5->setStyleSheet("background-color: white;"
                                   "border: 1px solid gray;"
                                   "border-radius:5px;");
-    QLabel* l = new QLabel(ui->scrollArea);
-    l->show();
-    l->move(0, 1000);
+    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui->scrollArea->setWidgetResizable(true);
 
     tt.setTasks(dbms.fetchData());
     build();
@@ -150,9 +150,16 @@ void MainWindow::delTask(int i)
     QFrame* frame = this->getFrame(i);
     QString name = frame->findChild<QLabel*>("label")->text();
     this->tt.deleteTask(name);
-    dbms.deleteTask();
+    dbms.deleteTasks();
     for(Task t:tt.getTasks())
         dbms.storeTask(t);
+    build();
+}
+void MainWindow::check(int i){
+    QFrame* frame = this->getFrame(i);
+    QString name = frame->findChild<QLabel*>("label")->text();
+    Task t=tt.getTask(name);
+    t.check();
     build();
 }
 void MainWindow::on_pushButton_5_clicked()
@@ -167,18 +174,25 @@ void MainWindow::on_pushButton_5_clicked()
     tt.addTask(t);
     build();
     dbms.storeTask(t);
+    ui->scrollAreaWidgetContents->setGeometry(0,0,819,1000+tt.getTasks().size());
+    ui->textEdit->clear();
+    ui->textEdit_2->clear();
+    ui->pushButton_2->setText("Today");
+    ui->pushButton_3->setText("Priority 1");
 }
 void MainWindow::build(){
 
     for(QFrame* f:taskFrames) f->close();
     taskFrames.clear();
     taskPosition=0;
-    QSignalMapper* mapper = new QSignalMapper (this) ;
+    QSignalMapper* deleteMapper = new QSignalMapper (this);
+    QSignalMapper* checkboxMapper = new QSignalMapper (this);
     int i=0;
 
     for(Task t:tt.getTasks()){
         QFrame* newFrame = new QFrame(ui->scrollAreaWidgetContents);
         this->taskFrames.push_back(newFrame);
+        newFrame->lower();
         QPoint pos = ui->scrollAreaWidgetContents->mapToGlobal(ui->scrollAreaWidgetContents->rect().topLeft());
         ui->scrollAreaWidgetContents->setGeometry(0, 0, 500, 1000+taskPosition);
         newFrame->setGeometry(120, 339+taskPosition, 581, 111);
@@ -189,11 +203,14 @@ void MainWindow::build(){
         newFrame->show();
 
         QCheckBox* cb = new QCheckBox(newFrame);
+        cb->setObjectName("cb");
         cb->setGeometry(10, 10, 25, 25);
         cb->setStyleSheet("background-color: white;"
                           "border: 0px solid gray;");
         cb->setTristate(t.getIsDone());
         cb->show();
+        QObject::connect(cb, SIGNAL(clicked()), checkboxMapper, SLOT(map()));
+        checkboxMapper->setMapping(cb, i);
 
         QLabel* label = new QLabel(newFrame);
         label->setObjectName("label");
@@ -231,10 +248,11 @@ void MainWindow::build(){
         del->setText("X");
         del->show();
 
-        QObject::connect(del, SIGNAL(clicked()), mapper, SLOT(map()));
-        mapper->setMapping(del, i);
+        QObject::connect(del, SIGNAL(clicked()), deleteMapper, SLOT(map()));
+        deleteMapper->setMapping(del, i);
         i++;
     }
-    connect(mapper, SIGNAL(mappedInt(int)), this, SLOT(delTask(int)));
+    connect(deleteMapper, SIGNAL(mappedInt(int)), this, SLOT(delTask(int)));
+    connect(checkboxMapper, SIGNAL(mappedInt(int)), this, SLOT(check(int)));
 }
 

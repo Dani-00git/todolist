@@ -11,6 +11,7 @@ public:
         this->desc = desc;
         this->name = name;
         this->prior = prior;
+        this->isDone = 0;
     }
     QString getName(){
         return name;
@@ -26,6 +27,10 @@ public:
     }
     bool getIsDone(){
         return isDone;
+    }
+    void check(){
+        if(isDone == 0) isDone=1;
+        else    isDone=0;
     }
 private:
     QString name;

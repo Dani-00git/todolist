@@ -49,6 +49,7 @@ private slots:
     void delTask(int i);
 
     QFrame* getFrame(int i);
+    void check(int i);
 
 private:
     Ui::MainWindow *ui;

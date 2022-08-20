@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(todolist VERSION 0.1 LANGUAGES CXX)
 
+enable_testing()
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -16,12 +21,13 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
+        DBMS.h
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
         task.h
         taskTracker.h
-        Builder.h
+        tst_todolist.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

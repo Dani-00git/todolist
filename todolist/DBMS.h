@@ -1,18 +1,15 @@
 #ifndef DBMS_H
 #define DBMS_H
 #include "task.h"
-#include "taskTracker.h"
 #include "QFile"
 #include "QTextStream"
-#include "list"
 #include "QDebug"
-
 
 class DBMS
 {
 public:
 
-    void deleteTask(){
+    void deleteTasks(){
         QFile f("/Users/danielemorganti/Desktop/todolist/db.txt");
         if(f.open(QIODevice::ReadWrite | QIODevice::Append | QIODevice::Text))
         {

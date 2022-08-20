@@ -17,7 +17,6 @@ public:
             if(t.getName() != name){
                 newList.push_back(t);
             }
-            else deletedTasks.push_back(t);
         }
         tasks = newList;
     }
@@ -27,9 +26,13 @@ public:
     void setTasks(list<Task> tasks){
         this->tasks = tasks;
     }
+    Task getTask(QString name){
+        for(Task t:tasks){
+            if(t.getName()==name)   return t;
+        }
+    }
 private:
     list<Task> tasks;
-    list<Task> deletedTasks;
 };
 
 #endif // TASKTRACKER_H
