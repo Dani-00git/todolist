@@ -23,14 +23,16 @@ public:
         if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
         {
             QTextStream stream(&file);
-            stream << "\n";
             stream << t.getName();
-            stream << "\n";
+            stream << ",";
             stream << t.getDesc();
-            stream << "\n";
+            stream << ",";
             stream << t.getDate();
-            stream << "\n";
+            stream << ",";
             stream << t.getPrior();
+            stream << ",";
+            stream << t.getIsDone();
+            stream << ",";
             stream << "\n";
             file.close();
         }
@@ -45,13 +47,36 @@ public:
 
         QTextStream in(&file);
         while(!in.atEnd()){
-            in.readLine();
-            QString name = in.readLine();
-            QString desc = in.readLine();
-            QString date = in.readLine();
-            QString prior = in.readLine();
+            QString task = in.readLine();
+            QString name="";
+            QString desc="";
+            QString date="";
+            QString prior="";
+            int isDone=0;
+            int i=0;
+            while(task[i]!=QString(",")){
+                name=name+task[i];
+                i++;
+            }
+            i++;
+            while(task[i]!=QString(",")){
+                desc=desc+task[i];
+                i++;
+            }
+            i++;
+            while(task[i]!=QString(",")){
+                date=date+task[i];
+                i++;
+            }
+            i++;
+            while(task[i]!=QString(",")){
+                prior=prior+task[i];
+                i++;
+            }
+            i++;
+            if(task[i]==QString("1")) isDone=1;
 
-            Task t(name,desc,date,prior);
+            Task t(name,desc,date,prior,isDone);
             tasks.push_back(t);
         }
         return tasks;

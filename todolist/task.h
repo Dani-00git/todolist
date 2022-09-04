@@ -6,33 +6,40 @@
 class Task
 {
 public:
-    Task(QString name, QString desc, QString date, QString prior){
+    Task(const QString& name, const QString desc, const QString& date, const QString& prior){
         this->date = date;
         this->desc = desc;
         this->name = name;
         this->prior = prior;
-        this->isDone = 0;
+        this->isDone = false;
     }
-    QString getName(){
+    Task(const QString& name, const QString desc, const QString& date, const QString& prior, int isDone){
+        this->date = date;
+        this->desc = desc;
+        this->name = name;
+        this->prior = prior;
+        this->isDone = isDone;
+    }
+    const QString& getName(){
         return name;
     }
-    QString getDesc(){
+    const QString& getDesc(){
         return desc;
     }
-    QString getDate(){
+    const QString& getDate(){
         return date;
     }
-    QString getPrior(){
+    const QString& getPrior(){
         return prior;
     }
-    bool getIsDone(){
+    const bool getIsDone(){
         return isDone;
     }
     void check(){
-        if(isDone == 0) isDone=1;
-        else    isDone=0;
+        if(isDone == true) isDone=false;
+        else    isDone=true;
     }
-private:
+public:
     QString name;
     QString desc;
     QString date;

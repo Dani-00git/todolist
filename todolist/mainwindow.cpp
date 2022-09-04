@@ -158,8 +158,10 @@ void MainWindow::delTask(int i)
 void MainWindow::check(int i){
     QFrame* frame = this->getFrame(i);
     QString name = frame->findChild<QLabel*>("label")->text();
-    Task t=tt.getTask(name);
-    t.check();
+    tt.checkTask(name);
+    dbms.deleteTasks();
+    for(Task t:tt.getTasks())
+        dbms.storeTask(t);
     build();
 }
 void MainWindow::on_pushButton_5_clicked()
@@ -189,13 +191,21 @@ void MainWindow::build(){
     QSignalMapper* checkboxMapper = new QSignalMapper (this);
     int i=0;
 
+    if(tt.totalTasks()>0){
+        QLabel* header = new QLabel(ui->scrollAreaWidgetContents);
+        header->setObjectName("header");
+        header->setGeometry(125, 340, 521, 16);
+        header->setText("task completati: "+ QString::number(tt.completedTasks())+" su un totale di: "+QString::number(tt.totalTasks()));
+        header->show();
+    }
+
     for(Task t:tt.getTasks()){
         QFrame* newFrame = new QFrame(ui->scrollAreaWidgetContents);
         this->taskFrames.push_back(newFrame);
         newFrame->lower();
         QPoint pos = ui->scrollAreaWidgetContents->mapToGlobal(ui->scrollAreaWidgetContents->rect().topLeft());
         ui->scrollAreaWidgetContents->setGeometry(0, 0, 500, 1000+taskPosition);
-        newFrame->setGeometry(120, 339+taskPosition, 581, 111);
+        newFrame->setGeometry(120, 365+taskPosition, 581, 111);
         taskPosition += 131;
         newFrame->setStyleSheet("background-color: white;"
                                 "border: 1px solid gray;"
@@ -207,7 +217,7 @@ void MainWindow::build(){
         cb->setGeometry(10, 10, 25, 25);
         cb->setStyleSheet("background-color: white;"
                           "border: 0px solid gray;");
-        cb->setTristate(t.getIsDone());
+        cb->setChecked(t.getIsDone());
         cb->show();
         QObject::connect(cb, SIGNAL(clicked()), checkboxMapper, SLOT(map()));
         checkboxMapper->setMapping(cb, i);

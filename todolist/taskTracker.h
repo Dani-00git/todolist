@@ -8,10 +8,10 @@ class TaskTracker
 {
 public:
     TaskTracker(){};
-    void addTask(Task t){
+    void addTask(const Task& t){
         tasks.push_back(t);
     }
-    void deleteTask(QString name){
+    void deleteTask(const QString& name){
         list<Task> newList;
         for(Task t:tasks){
             if(t.getName() != name){
@@ -20,16 +20,39 @@ public:
         }
         tasks = newList;
     }
-    list<Task> getTasks(){
+    const list<Task> getTasks(){
         return tasks;
     }
-    void setTasks(list<Task> tasks){
+    void setTasks(const list<Task> tasks){
         this->tasks = tasks;
     }
-    Task getTask(QString name){
-        for(Task t:tasks){
-            if(t.getName()==name)   return t;
+    Task searchTask(const QString name){
+        try{
+            for(Task t:tasks){
+                if(t.getName()==name)   return t;
+            }
+        }catch(exception &e){
+            //std::cout<<"Task inesistente";
         }
+    }
+    void checkTask(const QString name){
+        for(Task &t:tasks){
+            if(t.getName()==name){
+                t.check();
+            }
+        }
+    }
+    int completedTasks(){
+        int c=0;
+        for(Task t:tasks){
+            if(t.getIsDone()==1)    c++;
+        }
+        return c;
+    }
+    int totalTasks(){
+        int c=0;
+        for(Task t:tasks)   c++;
+        return c;
     }
 private:
     list<Task> tasks;
