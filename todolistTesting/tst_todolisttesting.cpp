@@ -2,7 +2,6 @@
 #include "/Users/danielemorganti/Desktop/todolist/taskTracker.h"
 #include "/Users/danielemorganti/Desktop/todolist/DBMS.h"
 #include "/Users/danielemorganti/Desktop/todolist/task.h"
-// add necessary includes here
 
 class todolistTesting : public QObject
 {
@@ -12,6 +11,7 @@ private slots:
     void taskTrackerTester();
     void taskTester();
     void DBMStester();
+    void countTester();
 
 private:
     TaskTracker tt;
@@ -23,10 +23,11 @@ void todolistTesting::taskTrackerTester()
     Task t2("task2","","","");
     tt.addTask(t1);
     tt.addTask(t2);
-    QCOMPARE(tt.getTask("task1").getName(),t1.getName());
-    QCOMPARE(tt.getTask("task2").getName(),t2.getName());
+    QCOMPARE(tt.searchTask("task1").getName(),t1.getName());
+    QCOMPARE(tt.searchTask("task2").getName(),t2.getName());
     tt.deleteTask(t1.getName());
-    QCOMPARE(tt.getTasks().begin()->getName(),t2.getName());
+    QString name = tt.getTasks().begin()->getName();
+    QCOMPARE(name, t2.getName());
 }
 void todolistTesting::taskTester(){
     Task t("task","a description","today","priority 1");
@@ -34,6 +35,20 @@ void todolistTesting::taskTester(){
     QCOMPARE(t.getDesc(),"a description");
     QCOMPARE(t.getDate(),"today");
     QCOMPARE(t.getPrior(),"priority 1");
+}
+void todolistTesting::countTester(){
+    Task t1("task1","","","");
+    Task t2("task2","","","");
+    Task t3("task3","","","");
+    Task t4("task4","","","");
+    tt.addTask(t1);
+    tt.addTask(t2);
+    tt.addTask(t3);
+    tt.addTask(t4);
+    tt.checkTask("task1");
+    tt.checkTask("task2");
+    QCOMPARE(tt.completedTasks(), 2);
+    QCOMPARE(tt.totalTasks(), 4);
 }
 void todolistTesting::DBMStester(){
     DBMS dbms;
