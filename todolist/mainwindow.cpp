@@ -140,10 +140,12 @@ void MainWindow::on_radioButton_8_clicked()
 QFrame* MainWindow::getFrame(int i)
 {
     int j=0;
+    QFrame* frame = new QFrame();
     for(QFrame* f:this->taskFrames){
-        if(j==i)    return f;
+        if(j==i)    frame=f;
         j++;
     }
+    return frame;
 }
 void MainWindow::delTask(int i)
 {

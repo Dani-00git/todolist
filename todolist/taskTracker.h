@@ -20,21 +20,21 @@ public:
         }
         tasks = newList;
     }
-    const list<Task> getTasks(){
+    const list<Task>& getTasks(){
         return tasks;
     }
     void setTasks(const list<Task> tasks){
         this->tasks = tasks;
     }
     Task searchTask(const QString name){
-        try{
-            for(Task t:tasks){
-                if(t.getName()==name)   return t;
-            }
-        }catch(exception &e){
-            //std::cout<<"Task inesistente";
+
+        Task task;
+        for(Task& t:tasks){
+            if(t.getName()==name)   task=t;
         }
+        return task;
     }
+
     void checkTask(const QString name){
         for(Task &t:tasks){
             if(t.getName()==name){
@@ -42,6 +42,7 @@ public:
             }
         }
     }
+
     int completedTasks(){
         int c=0;
         for(Task t:tasks){
@@ -51,7 +52,7 @@ public:
     }
     int totalTasks(){
         int c=0;
-        for(Task t:tasks)   c++;
+        for(Task& t:tasks)   c++;
         return c;
     }
 private:

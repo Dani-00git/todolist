@@ -10,7 +10,7 @@ class DBMS
 public:
 
     void deleteTasks(){
-        QFile f("/Users/danielemorganti/Desktop/todolist/db.txt");
+        QFile f("db.txt");
         if(f.open(QIODevice::ReadWrite | QIODevice::Append | QIODevice::Text))
         {
             f.resize(0);
@@ -19,7 +19,7 @@ public:
     }
 
     void storeTask(Task t){
-        QFile file("/Users/danielemorganti/Desktop/todolist/db.txt");
+        QFile file("db.txt");
         if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
         {
             QTextStream stream(&file);
@@ -40,7 +40,7 @@ public:
     std::list<Task> fetchData(){
 
         std::list<Task> tasks;
-        QFile file("/Users/danielemorganti/Desktop/todolist/db.txt");
+        QFile file("db.txt");
 
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             return tasks;
