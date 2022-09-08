@@ -13,7 +13,7 @@ public:
     }
     void deleteTask(const QString& name){
         list<Task> newList;
-        for(Task t:tasks){
+        for(Task& t:tasks){
             if(t.getName() != name){
                 newList.push_back(t);
             }

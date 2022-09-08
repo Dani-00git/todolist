@@ -6,7 +6,7 @@
 class Task
 {
 public:
-    Task();
+    Task(){};
     Task(const QString& name, const QString desc, const QString& date, const QString& prior){
         this->date = date;
         this->desc = desc;
