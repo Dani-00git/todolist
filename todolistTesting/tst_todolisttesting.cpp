@@ -1,7 +1,7 @@
 #include <QtTest>
-#include "/Users/danielemorganti/Desktop/todolist/taskTracker.h"
-#include "/Users/danielemorganti/Desktop/todolist/DBMS.h"
-#include "/Users/danielemorganti/Desktop/todolist/task.h"
+#include "../todolist/taskTracker.h"
+#include "../todolist/DBMS.h"
+#include "../todolist/task.h"
 
 class todolistTesting : public QObject
 {
@@ -28,6 +28,7 @@ void todolistTesting::taskTrackerTester()
     tt.deleteTask(t1.getName());
     QString name = tt.getTasks().begin()->getName();
     QCOMPARE(name, t2.getName());
+    tt.deleteTask(t2.getName());
 }
 void todolistTesting::taskTester(){
     Task t("task","a description","today","priority 1");
@@ -37,10 +38,10 @@ void todolistTesting::taskTester(){
     QCOMPARE(t.getPrior(),"priority 1");
 }
 void todolistTesting::countTester(){
-    Task t1("task1","","","");
-    Task t2("task2","","","");
-    Task t3("task3","","","");
-    Task t4("task4","","","");
+    Task t1("task1","","","",0);
+    Task t2("task2","","","",0);
+    Task t3("task3","","","",0);
+    Task t4("task4","","","",0);
     tt.addTask(t1);
     tt.addTask(t2);
     tt.addTask(t3);
